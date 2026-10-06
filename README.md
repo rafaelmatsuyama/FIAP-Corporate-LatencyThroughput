@@ -11,7 +11,7 @@
 
 Este repositório contém a infraestrutura completa, a API simulada de Core Banking e os roteiros de laboratórios práticos para o treinamento executivo de **Latência e Vazão** (*Latency & Throughput*) em sistemas distribuídos.
 
-O treinamento adota a metodologia contínua de **Problem-Based Learning (PBL)** estruturada em dois ciclos práticos por aula ("Dueto Hands-on"). Os squads atuam como um time de **Incident Response de Engenharia**, investigando, diagnosticando, otimizando e blindando uma API financeira real sob estresse de concorrência.
+O treinamento adota a metodologia contínua de **Problem-Based Learning (PBL)** estruturada em dois ciclos práticos por aula ("Dueto Hands-on"). A execução prática dos laboratórios é **100% individual** no GitHub Codespaces de cada participante, enquanto os squads atuam como uma estrutura colaborativa de suporte mútuo e debate técnico de **Incident Response de Engenharia**.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐

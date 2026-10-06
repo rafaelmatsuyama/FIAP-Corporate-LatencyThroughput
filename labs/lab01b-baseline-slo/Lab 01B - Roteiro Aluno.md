@@ -14,7 +14,7 @@ Ao concluir este laboratório, você será capaz de:
 1. Submeter a API Bancária a uma esteira de carga realista concorrente cobrindo três rotas fundamentais: `/saldo`, `/extrato` e `/transferencias`.
 2. Vivenciar na prática a **falácia da média aritmética** e como a cauda longa (*tail latency*) oculta desastres de experiência de usuário no core banking.
 3. Detectar e quantificar a violação formal do **SLO contratado (P99 < 200ms)** no endpoint crítico de `/extrato`.
-4. Preencher a **Ficha de Diagnóstico Inicial do Squad** com as métricas do baseline para guiar a investigação nas próximas aulas.
+4. Preencher a sua **Ficha de Diagnóstico Individual** com as métricas do baseline para guiar a investigação nas próximas aulas.
 
 ---
 
@@ -88,8 +88,8 @@ Ao término do teste, o k6 exibirá as tags customizadas por endpoint. Observe a
 
 ---
 
-### Passo 5: Preenchimento da Ficha de Medição do Squad
-Reúna-se com os integrantes do seu squad e compilem o diagnóstico executivo na tabela abaixo:
+### Passo 5: Preenchimento da Ficha de Medição Individual
+Registre os números medidos no seu próprio Codespaces na tabela de diagnóstico abaixo (você pode comparar suas medições com os colegas do squad no chat):
 
 | Métrica de Engenharia | Valor Medido | Meta de SLO | Situação |
 | :--- | :---: | :---: | :---: |
@@ -98,8 +98,8 @@ Reúna-se com os integrantes do seu squad e compilem o diagnóstico executivo na
 | **Latência P99 do `/extrato`** | *[Preencher]* ms | $\le 200$ ms | [ ] Atendido [x] **VIOLADO** |
 | **Taxa de Erros HTTP (`http_req_failed`)**| *[Preencher]* % | $0.00\%$ | [ ] Atendido [ ] Violado |
 
-#### 📝 Dilema de Investigação do Squad:
-Discutam brevemente entre si e respondam:  
+#### 📝 Reflexão de Engenharia:
+Avalie individualmente (ou troque impressões com os colegas do squad):  
 *"O k6 provou matematicamente que o `/extrato` está lento, mas ele é capaz de apontar se o culpado é I/O de rede, overhead de serialização JSON, concorrência de pool de conexão ou uma slow query no PostgreSQL?"*
 
 > **Spoiler:** O k6 atua como uma "caixa-preta externa". Na **Aula 02**, utilizaremos **Distributed Tracing (Jaeger)** e **EXPLAIN ANALYZE no banco** para abrir o capô e achar a linha exata da degradação.
@@ -110,8 +110,8 @@ Discutam brevemente entre si e respondam:
 
 O laboratório é considerado **concluído com sucesso** quando:
 * [x] A esteira integrada `scripts/lab1b.js` executou até o fim com sucesso nas 3 rotas.
-* [x] O squad coletou e confirmou os percentis P50, P90 e P99 específicos do endpoint `/extrato`.
-* [x] O squad constatou a quebra do SLO (P99 > 200ms) e compartilhou os números do baseline no chat do Teams.
+* [x] Você coletou e confirmou no seu terminal os percentis P50, P90 e P99 específicos do endpoint `/extrato`.
+* [x] Você constatou a quebra do SLO (P99 > 200ms) e preencheu sua ficha de medição individual (compartilhando os números no chat do Teams).
 
 ---
 
@@ -128,7 +128,7 @@ cd ..
 
 ## 💡 Desafios Complementares (Para Alunos Avançados)
 
-Se o squad desejar automatizar a governança de engenharia como código via **Thresholds do k6**:
+Se você desejar automatizar a governança de engenharia como código via **Thresholds do k6** no seu Codespaces:
 
 1. Crie uma cópia do script para inserir a trava:
    ```bash

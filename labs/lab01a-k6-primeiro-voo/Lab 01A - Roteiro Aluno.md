@@ -145,7 +145,7 @@ O laboratório é considerado **concluído com sucesso** quando:
 * [x] A stack do `docker compose` está íntegra com todos os contêineres ativos.
 * [x] O teste com k6 executou sem falhas de rede (`http_req_failed: 0.00%`).
 * [x] A rota `/saldo` respondeu com `http_req_duration` estável em sub-milissegundos (< 15ms no P95).
-* [x] O aluno publica no chat do squad os valores de: **TPS médio**, **P50** e **P95**.
+* [x] Validação individual concluída no terminal com anotação das métricas: **TPS médio**, **P50** e **P95** (compartilhamento voluntário com os colegas de squad no chat).
 
 ---
 
@@ -162,7 +162,7 @@ cd ..
 
 ## 💡 Desafios Complementares (Para Alunos Avançados)
 
-Se o seu squad concluiu a etapa guiada antes do tempo, experimente implementar uma **rampa suave de carga (Stages)**:
+Se você concluiu a etapa guiada antes do tempo previsto, experimente implementar uma **rampa suave de carga (Stages)** no seu ambiente:
 
 1. Crie uma cópia do script do k6:
    ```bash
