@@ -1,0 +1,99 @@
+services:
+  # ---------------------------------------------------------------------------
+  # 1. BANCO DE DADOS RELACIONAL: PostgreSQL 16
+  # ---------------------------------------------------------------------------
+  banco-postgres:
+    image: postgres:16-alpine
+    container_name: banco-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: banco_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d banco_db"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  # ---------------------------------------------------------------------------
+  # 2. CACHE EM MEMÓRIA: Redis 7
+  # ---------------------------------------------------------------------------
+  banco-redis:
+    image: redis:7-alpine
+    container_name: banco-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+
+  # ---------------------------------------------------------------------------
+  # 3. DISTRIBUTED TRACING: Jaeger All-in-One
+  # ---------------------------------------------------------------------------
+  telemetria-jaeger:
+    image: jaegertracing/all-in-one:1.57
+    container_name: telemetria-jaeger
+    restart: unless-stopped
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - "16686:16686" # Jaeger Web UI
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+
+  # ---------------------------------------------------------------------------
+  # 4. MÉTRICAS DIMENSIONAIS: Prometheus
+  # ---------------------------------------------------------------------------
+  telemetria-prometheus:
+    image: prom/prometheus:v2.53.1
+    container_name: telemetria-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./telemetria/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  # ---------------------------------------------------------------------------
+  # 5. DASHBOARDS EM TEMPO REAL: Grafana
+  # ---------------------------------------------------------------------------
+  telemetria-grafana:
+    image: grafana/grafana:11.1.0
+    container_name: telemetria-grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    ports:
+      - "3000:3000"
+    depends_on:
+      - telemetria-prometheus
+
+  # ---------------------------------------------------------------------------
+  # 6. MICROSSERVIÇO CORE BANKING: Spring Boot 3 (Java 21)
+  # ---------------------------------------------------------------------------
+  banco-api:
+    build:
+      context: ./app
+      dockerfile: Dockerfile
+    image: fiap/banking-api:latest
+    container_name: banco-api
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://banco-postgres:5432/banco_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_DATA_REDIS_HOST=banco-redis
+      - SPRING_DATA_REDIS_PORT=6379
+      - MANAGEMENT_OTLP_TRACING_ENDPOINT=http://telemetria-jaeger:4318/v1/traces
+    depends_on:
+      banco-postgres:
+        condition: service_healthy
+      banco-redis:
+        condition: service_started
+      telemetria-jaeger:
+        condition: service_started

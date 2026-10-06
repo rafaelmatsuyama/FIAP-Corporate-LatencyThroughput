@@ -1,38 +1,38 @@
-# 🏦 FIAP Corporate: Latência e Vazão em Sistemas Distribuídos
+# 🏦 FIAP Corporate: Latency & Throughput in Distributed Systems
 
-> **Ambiente Oficial de Laboratórios Práticos**  
-> **Programa:** Modernização 2026 — Engenharia de Software  
-> **Parceria:** Alura Business & FIAP Corporate  
-> **Instrutor:** Prof. Rafael Matsuyama  
+> **Official Hands-on Laboratory Environment**  
+> **Program:** Modernização 2026 — Software Engineering  
+> **Partnership:** Alura Business & FIAP Corporate  
+> **Instructor:** Prof. Rafael Matsuyama  
 
 ---
 
-## 🎯 Visão Geral do Treinamento
+## 🎯 Course Overview
 
-Este repositório contém a infraestrutura completa, a API simulada de Core Banking e os laboratórios hands-on para o treinamento executivo de **Latência e Vazão** (*Latency & Throughput*).
+This repository contains the infrastructure, simulated Core Banking microservice, and hands-on laboratory guides for the executive engineering training on **Latency & Throughput** in distributed systems.
 
-O treinamento adota a metodologia **PBL (Problem-Based Learning)** contínua: durante 4 encontros práticos ("Dueto Hands-on"), você atuará em squad como parte de um time de engenharia investigando, diagnosticando e otimizando uma API financeira real sob estresse de tráfego.
+The course follows a continuous **Problem-Based Learning (PBL)** methodology structured into two practical cycles per session ("Hands-on Duet"). Squads operate as an **Incident Response Engineering Team**, actively measuring, diagnosing, tuning, and hardening a real financial API under heavy concurrent load.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│                       A JORNADA DE ENGENHARIA (PBL)                         │
+│                       THE ENGINEERING JOURNEY (PBL)                         │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│ 1. MEDIÇÃO (Aula 01)     ──► Testes com k6 & Violação de SLO (P99 > 200ms)  │
-│ 2. DIAGNÓSTICO (Aula 02) ──► Tracing com Jaeger & EXPLAIN ANALYZE no Postgres│
-│ 3. CURA (Aula 03)        ──► Indexação Composta & Cache-Aside com Redis     │
-│ 4. BLINDAGEM (Aula 04)   ──► HikariCP Pool Tuning & Flash Pitch dos Squads  │
+│ 1. MEASUREMENT (Class 01) ──► k6 Load Testing & SLO Violation (P99 > 200ms) │
+│ 2. DIAGNOSIS (Class 02)   ──► Jaeger Distributed Tracing & Postgres EXPLAIN │
+│ 3. OPTIMIZATION (Class 03)──► Compound B-Tree Indexing & Redis Cache-Aside  │
+│ 4. HARDENING (Class 04)   ──► HikariCP Pool Sizing & Squad Flash Pitches    │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 🚀 Inicialização Rápida no GitHub Codespaces
+## 🚀 Quick Start with GitHub Codespaces
 
-O ambiente é 100% autônomo e pré-configurado para rodar no **GitHub Codespaces** (Linux x86_64, 2 vCPUs, 8 GB RAM):
+This environment is fully self-contained and pre-configured to run on **GitHub Codespaces** (Linux x86_64, 2 vCPUs, 8 GB RAM):
 
-1. Clique no botão **Code** no topo deste repositório.
-2. Selecione a aba **Codespaces** e clique em **Create codespace on main**.
-3. Aguarde o terminal do Codespaces carregar e execute:
+1. Click the **Code** button at the top of this repository.
+2. Select the **Codespaces** tab and click **Create codespace on main**.
+3. Once the Codespace terminal initializes, spin up the entire stack:
    ```bash
    docker compose up -d
    docker compose ps
@@ -40,30 +40,58 @@ O ambiente é 100% autônomo e pré-configurado para rodar no **GitHub Codespace
 
 ---
 
-## 🗺️ Mapa de Portas e Serviços
+## 🗺️ Port Mapping & Services
 
-| Serviço | Porta Web | Finalidade Técnica |
+| Service | Port | Description & Role |
 | :--- | :---: | :--- |
-| **API Bancária (Spring Boot 3)** | `8080` | Microsserviço de Core Banking (`/saldo`, `/extrato`, `/transferencias`) |
-| **Grafana** | `3000` | Dashboards executivos em tempo real (TPS, P50/P95/P99, HikariCP) |
-| **Jaeger UI** | `16686` | Distributed Tracing ponta a ponta e análise de waterfall de spans |
-| **Prometheus** | `9090` | Coleta e raspagem contínua de métricas dimensionais |
-| **PostgreSQL 16** | `5432` | Persistência relacional de contas e extratos |
-| **Redis 7** | `6379` | Camada de cache em memória para baixa latência |
+| **Banking Core API (Spring Boot 3)** | `8080` | Banking microservice (`/health`, `/saldo`, `/extrato`, `/transferencias`) |
+| **Grafana** | `3000` | Real-time dashboards (TPS, Latency Percentiles P50/P95/P99, HikariCP) |
+| **Jaeger UI** | `16686` | End-to-end distributed tracing & waterfall span inspection |
+| **Prometheus** | `9090` | Time-series scraper collecting metrics every 2s |
+| **PostgreSQL 16** | `5432` | Relational storage with 150k historical transactions for query tuning |
+| **Redis 7** | `6379` | In-memory key-value cache for sub-millisecond lookups |
 
 ---
 
-## 🧪 Estrutura dos Laboratórios
+## 🧪 Laboratory Guides (Roteiros Práticos)
+
+All student guides follow the structured step-by-step format:
 
 ```text
 ├── labs/
-│   ├── lab01a-k6-primeiro-voo/      # Aula 01: Subida da stack e primeiro teste com k6
-│   ├── lab01b-baseline-slo/         # Aula 01: Carga concorrente e violação de SLO
-│   ├── lab02a-jaeger-tracing/       # Aula 02: Tracing distribuído e isolamento de nós
-│   ├── lab02b-postgres-explain/     # Aula 02: Diagnóstico no banco com EXPLAIN ANALYZE
-│   ├── lab03a-index-tuning/         # Aula 03: Tuning de persistência com índices
-│   ├── lab03b-redis-cache/          # Aula 03: Cache-aside com Redis
-│   └── lab04a-hikaricp-starvation/  # Aula 04: Dimensionamento e exaustão de pool
-├── scripts/                         # Scripts declarativos do Grafana k6
-└── app/                             # Código-fonte da API Spring Boot 3
+│   ├── lab01a-k6-primeiro-voo/      # Class 01: Stack spin-up & first flight with k6 CLI
+│   ├── lab01b-baseline-slo/         # Class 01: Concurrent load & tail latency SLO violation
+│   ├── lab02a-jaeger-tracing/       # Class 02: Distributed tracing & bottleneck isolation
+│   ├── lab02b-postgres-explain/     # Class 02: Query execution plan & Sequential Scans
+│   ├── lab03a-index-tuning/         # Class 03: Selective B-Tree index migration
+│   ├── lab03b-redis-cache/          # Class 03: Cache-Aside pattern implementation
+│   └── lab04a-hikaricp-starvation/  # Class 04: JDBC Connection Pool tuning & saturation
+├── scripts/                         # Declarative Grafana k6 JavaScript scenarios
+│   ├── lab1a.js                     # Light endpoints baseline (10 VUs)
+│   └── lab1b.js                     # Full mixed traffic & tail latency trigger (25 VUs)
+├── db/                              # PostgreSQL schema and transaction data seed
+│   └── init.sql
+├── telemetria/                      # Prometheus scraper configuration
+│   └── prometheus.yml
+└── app/                             # Core Banking Spring Boot 3 microservice (Java 21)
+    ├── src/
+    ├── pom.xml
+    └── Dockerfile
+```
+
+---
+
+## 🛠️ Verification & Smoke Test
+
+Validate that the banking service is healthy:
+
+```bash
+# Health check
+curl -i http://localhost:8080/health
+
+# Account balance check (Fast route: < 5ms)
+curl -i http://localhost:8080/api/v1/contas/1001/saldo
+
+# Account statement check (Unindexed slow route: ~400ms-800ms under load)
+curl -i http://localhost:8080/api/v1/contas/1001/extrato
 ```

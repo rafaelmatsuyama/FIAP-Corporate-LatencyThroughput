@@ -1,0 +1,9 @@
+global:
+  scrape_interval: 2s
+  evaluation_interval: 2s
+
+scrape_configs:
+  - job_name: 'banking-api'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['banco-api:8080']
