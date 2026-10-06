@@ -78,7 +78,6 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile
-    image: fiap/banking-api:latest
     container_name: banco-api
     restart: unless-stopped
     ports:

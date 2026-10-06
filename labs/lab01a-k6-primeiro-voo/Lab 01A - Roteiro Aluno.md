@@ -61,7 +61,7 @@ docker compose -f ../../docker-compose.yml ps
 *Saída esperada:*
 ```text
 NAME                     IMAGE                      STATUS
-banco-api                fiap/banking-api:latest    Up (healthy)
+banco-api                banco-api:latest           Up (healthy)
 banco-postgres           postgres:16-alpine         Up
 banco-redis              redis:7-alpine             Up
 telemetria-jaeger        jaegertracing/all-in-one   Up
