@@ -23,3 +23,8 @@ grafana_data/
 # k6 outputs
 summary.json
 test-results/
+
+# Gabaritos e Solucoes dos Labs (material exclusivo do instrutor)
+**/gabarito/
+*-rampa.js
+*-threshold.js
