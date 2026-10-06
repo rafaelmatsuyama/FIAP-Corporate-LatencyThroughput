@@ -1,0 +1,25 @@
+# Java & Maven
+target/
+*.class
+*.jar
+*.war
+*.ear
+*.log
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE & OS
+.idea/
+*.iml
+.vscode/
+*.swp
+*.DS_Store
+Thumbs.db
+
+# Docker & Local Data
+.data/
+postgres_data/
+grafana_data/
+
+# k6 outputs
+summary.json
+test-results/
