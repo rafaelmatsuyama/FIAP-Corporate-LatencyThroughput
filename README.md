@@ -40,6 +40,26 @@ O ambiente é 100% autônomo e pré-configurado para execução no **GitHub Code
 
 ---
 
+## 🚦 Como Iniciar os Laboratórios
+
+Assim que a stack estiver ativa (`docker compose ps` com todos os serviços em `Up`):
+
+1. **Aula 01 - Primeiro Voo com k6 e Interpretação de Métricas:**
+   * 📖 **Roteiro do Aluno:** [`labs/lab01a-k6-primeiro-voo/Lab 01A - Roteiro Aluno.md`](labs/lab01a-k6-primeiro-voo/Lab%2001A%20-%20Roteiro%20Aluno.md)
+   * ⚡ **Comando de Teste:**
+     ```bash
+     k6 run scripts/lab1a.js
+     ```
+
+2. **Aula 01 - Medição do Baseline e Violação de SLO:**
+   * 📖 **Roteiro do Aluno:** [`labs/lab01b-baseline-slo/Lab 01B - Roteiro Aluno.md`](labs/lab01b-baseline-slo/Lab%2001B%20-%20Roteiro%20Aluno.md)
+   * ⚡ **Comando de Teste:**
+     ```bash
+     k6 run scripts/lab1b.js
+     ```
+
+---
+
 ## 🗺️ Mapa de Portas e Serviços
 
 | Serviço | Porta | Descrição e Papel na Arquitetura |
