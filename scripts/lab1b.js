@@ -4,6 +4,12 @@ import { check, sleep } from 'k6';
 export const options = {
   vus: 25,
   duration: '40s',
+  summaryTrendStats: ['avg', 'min', 'med', 'p(90)', 'p(95)', 'p(99)', 'max'],
+  thresholds: {
+    'http_req_duration{name:saldo}': [],
+    'http_req_duration{name:extrato}': [],
+    'http_req_duration{name:transferencias}': [],
+  },
 };
 
 const BASE_URL = __ENV.BASE_URL || 'http://localhost:8080';
