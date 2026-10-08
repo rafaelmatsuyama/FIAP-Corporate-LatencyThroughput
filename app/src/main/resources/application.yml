@@ -28,6 +28,12 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
+# Configuração de Proxy JDBC para Observabilidade
+jdbc:
+  datasource-proxy:
+    enabled: true
+    type: SPRING_PROXY
+
 # Métricas e Telemetria
 management:
   endpoints:

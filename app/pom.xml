@@ -63,6 +63,13 @@
             <groupId>io.opentelemetry</groupId>
             <artifactId>opentelemetry-exporter-otlp</artifactId>
         </dependency>
+
+        <!-- Telemetria: JDBC Tracing com Datasource-Micrometer (Spans filhos no Jaeger) -->
+        <dependency>
+            <groupId>net.ttddyy.observation</groupId>
+            <artifactId>datasource-micrometer-spring-boot</artifactId>
+            <version>1.0.6</version>
+        </dependency>
     </dependencies>
 
     <build>
