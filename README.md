@@ -44,18 +44,36 @@ O ambiente é 100% autônomo e pré-configurado para execução no **GitHub Code
 
 Assim que a stack estiver ativa (`docker compose ps` com todos os serviços em `Up`):
 
-1. **Aula 01 - Primeiro Voo com k6 e Interpretação de Métricas:**
+### Aula 01 — Medição & Baseline de Performance
+1. **Lab 01A - Primeiro Voo com k6 e Interpretação de Métricas:**
    * 📖 **Roteiro do Aluno:** [`labs/lab01a-k6-primeiro-voo/Lab 01A - Roteiro Aluno.md`](labs/lab01a-k6-primeiro-voo/Lab%2001A%20-%20Roteiro%20Aluno.md)
    * ⚡ **Comando de Teste:**
      ```bash
      k6 run scripts/lab1a.js
      ```
 
-2. **Aula 01 - Medição do Baseline e Violação de SLO:**
+2. **Lab 01B - Medição do Baseline e Violação de SLO:**
    * 📖 **Roteiro do Aluno:** [`labs/lab01b-baseline-slo/Lab 01B - Roteiro Aluno.md`](labs/lab01b-baseline-slo/Lab%2001B%20-%20Roteiro%20Aluno.md)
    * ⚡ **Comando de Teste:**
      ```bash
      k6 run scripts/lab1b.js
+     ```
+
+### Aula 02 — Diagnóstico com Observabilidade & Causa-Raiz
+3. **Lab 02A - Distributed Tracing com OpenTelemetry & Jaeger:**
+   * 📖 **Roteiro do Aluno:** [`labs/lab02a-tracing-jaeger/Lab 02A - Roteiro Aluno.md`](labs/lab02a-tracing-jaeger/Lab%2002A%20-%20Roteiro%20Aluno.md)
+   * ⚡ **Geração de Telemetria & Jaeger UI:**
+     ```bash
+     k6 run scripts/lab1b.js --duration 30s
+     # Acesse http://localhost:16686 (Jaeger Web UI)
+     ```
+
+4. **Lab 02B - Diagnóstico de Causa-Raiz no Banco com EXPLAIN ANALYZE:**
+   * 📖 **Roteiro do Aluno:** [`labs/lab02b-explain-postgresql/Lab 02B - Roteiro Aluno.md`](labs/lab02b-explain-postgresql/Lab%2002B%20-%20Roteiro%20Aluno.md)
+   * ⚡ **Acesso ao PostgreSQL & Análise do Plano:**
+     ```bash
+     docker exec -it banco-postgres psql -U postgres -d banco_db
+     # No psql: EXPLAIN ANALYZE SELECT * FROM transacoes WHERE conta_id = 1001 ORDER BY data_transacao DESC LIMIT 20;
      ```
 
 ---
@@ -81,8 +99,8 @@ Todos os laboratórios seguem o padrão estruturado passo a passo:
 ├── labs/
 │   ├── lab01a-k6-primeiro-voo/      # Aula 01: Subida da stack e primeiro voo com k6 CLI
 │   ├── lab01b-baseline-slo/         # Aula 01: Carga concorrente e violação de SLO no extrato
-│   ├── lab02a-jaeger-tracing/       # Aula 02: Tracing distribuído e isolamento de gargalo
-│   ├── lab02b-postgres-explain/     # Aula 02: Plano de execução e Sequential Scans
+│   ├── lab02a-tracing-jaeger/       # Aula 02: Tracing distribuído e isolamento de gargalo
+│   ├── lab02b-explain-postgresql/   # Aula 02: Plano de execução e Sequential Scans
 │   ├── lab03a-index-tuning/         # Aula 03: Migração de índice B-Tree seletivo
 │   ├── lab03b-redis-cache/          # Aula 03: Implementação do padrão Cache-Aside
 │   └── lab04a-hikaricp-starvation/  # Aula 04: Dimensionamento e saturação do HikariCP
@@ -91,8 +109,14 @@ Todos os laboratórios seguem o padrão estruturado passo a passo:
 │   └── lab1b.js                     # Tráfego misto com disparo de cauda longa (25 VUs)
 ├── db/                              # Schema e seed de transações do PostgreSQL
 │   └── init.sql
-├── telemetria/                      # Configurações de coleta do Prometheus
-│   └── prometheus.yml
+├── telemetria/                      # Configurações de telemetria e observabilidade
+│   ├── prometheus.yml               # Coleta de métricas a cada 2s
+│   └── grafana/                     # Provisioning de datasources e dashboards
+│       └── provisioning/
+│           ├── datasources/datasource.yml
+│           └── dashboards/
+│               ├── dashboards.yml
+│               └── core-banking.json
 └── app/                             # Microsserviço Core Banking Spring Boot 3 (Java 21)
     ├── src/
     ├── pom.xml
