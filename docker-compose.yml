@@ -68,6 +68,9 @@ services:
       - GF_USERS_ALLOW_SIGN_UP=false
     ports:
       - "3000:3000"
+    volumes:
+      - ./telemetria/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources:ro
+      - ./telemetria/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards:ro
     depends_on:
       - telemetria-prometheus
 
