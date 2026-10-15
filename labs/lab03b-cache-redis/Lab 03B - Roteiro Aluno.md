@@ -147,30 +147,50 @@ No prompt do Redis, execute os comandos de auditoria operacional:
 
 ---
 
-### Passo 6: Teste de Carga Agressivo com k6 (40 VUs)
-Agora vamos submeter a arquitetura a um cenário de concorrência intensa. Execute o script do Lab 03B:
+### Passo 6: Provocação de Arquitetura — A Armadilha do Vizinho Barulhento (*Noisy Neighbor*)
+Muitas equipes assumem que adicionar Redis em uma rota resolve automaticamente a escala de toda a aplicação. Vamos testar essa hipótese submetendo a API a uma carga concorrente mista (saldo, extrato e transferências simultâneas):
+
+```bash
+k6 run scripts/lab3b-contencao.js
+```
+
+Observe o resultado no console:
+* **O Choque de Realidade:** Mesmo com o Redis ativo no extrato, a latência P99 do extrato atinge **> 400ms**, e o threshold é violado!
+* **A Pergunta de 1 Milhão de Dólares:** *Por que o `/extrato` degradou se ele está em cache na memória do Redis?*
+* **A Resposta Arquitetural:** Microsserviços compartilham recursos finitos do processo hospedeiro:
+  1. O pool de conexões **HikariCP** (20 conexões).
+  2. O pool de threads HTTP do **Tomcat**.
+  3. A CPU compartilhada da máquina virtual.
+  Como 70% da carga deste script atacou rotas sem cache (`/saldo` e `/transferencias`), o banco relacional afogou e esgotou as conexões do HikariCP. As threads do Tomcat travaram na fila do banco, represando as requisições de extrato na camada HTTP antes mesmo que pudessem consultar o Redis!
+* **A Lição:** O cache protege a consulta que ele atende, mas **não blinda a aplicação contra o esgotamento de recursos compartilhados provocado por vizinhos barulhentos (*Noisy Neighbors*)**.
+
+---
+
+### Passo 7: Consagração da Arquitetura — Teste da Camada Blindada no Redis
+Agora vamos submeter a API a um teste focado na rota blindada pelo padrão Cache-Aside (100% do tráfego direcionado para o `/extrato` em memória):
 
 ```bash
 k6 run scripts/lab3b.js
 ```
 
-Analise o relatório consolidado emitido pelo k6 no terminal:
+Analise a saída consolidada do k6 no terminal:
 * **`http_req_duration{name:extrato}`:**
-  * **P90:** `~1.2ms - 1.8ms`
-  * **P95:** `~1.5ms - 2.2ms`
-  * **P99:** **`~2.0ms - 2.8ms`** (Latência sub-milissegundo mantida sob estresse!)
-* O threshold corporativo (`p(99) < 20ms`) é aprovado com ampla margem de segurança (**[ ✓ ] PASS**).
-* A taxa de vazão (TPS) atinge centenas de requisições por segundo.
+  * **P90:** `~1.2ms - 3.5ms`
+  * **P95:** `~1.8ms - 4.5ms`
+  * **P99:** **`~2.0ms - 8.0ms`** (Latência sub-milissegundo in-memory mantida sob concorrência!)
+* O threshold corporativo (`p(99) < 20ms`) é aprovado com ampla folga (**[ ✓ ] PASS**).
+* Zero consultas ao PostgreSQL: a camada in-memory absorveu 100% da carga!
 
 ---
 
-### Passo 7: Análise de Telemetria e Blindagem no Grafana
+### Passo 8: Análise de Telemetria no Grafana & O Gancho para a Aula 04
 Abra o navegador no Grafana (`http://localhost:3000` | admin / admin):
 1. Acesse o dashboard **Core Banking - Visão de Performance**.
-2. Observe a blindagem arquitetural da camada de persistência:
-   * **Consagração da Latência:** Enquanto o tuning de índices no Lab 03A reduziu o P99 para ~35ms, o Cache-Aside no Redis fez a latência colapsar para **~2ms** (um ganho de 15x sobre o banco indexado e superior a 300x em relação ao baseline da Aula 01).
-   * **Painel Database Query Duration:** Mesmo sob a elevação acentuada da vazão no extrato (40 VUs), as consultas no PostgreSQL permanecem em repouso quase absoluto. A camada in-memory absorveu o tráfego crítico.
-   * **Conexões HikariCP:** Ausência completa de saturação ou retenção de conexões no pool da aplicação.
+2. Observe o contraste dramático entre os dois experimentos:
+   * **No momento do `lab3b-contencao.js`:** Picos de fila no HikariCP e saturação de conexões gerada pelos endpoints não cacheados.
+   * **No momento do `lab3b.js`:** A curva do painel *Database Query Duration* colapsa para **zero**, provando o repouso absoluto da persistência relacional e a eficácia cirúrgica do Cache-Aside.
+3. **Ponte para a Aula 04:**
+   > *Percebeu como a contenção de conexões no HikariCP quase derrubou nossa aplicação mesmo com Redis? Pois na **Aula 04**, mergulharemos a fundo no dimensionamento de pools de banco (HikariCP), saturação de threads e estratégias de backpressure!*
 
 ---
 
@@ -180,9 +200,9 @@ O laboratório é considerado **concluído com sucesso** quando:
 * [x] A classe `ExtratoCacheService.java` foi inspecionada no VS Code.
 * [x] A API bancária foi reiniciada com `APP_CACHE_ENABLED=true`.
 * [x] A chave `extrato:1001` foi conferida no `redis-cli` com `TTL` ativo.
-* [x] O comando `INFO stats` confirmou o incremento de `keyspace_hits`.
-* [x] O script `scripts/lab3b.js` rodou com sucesso acusando P99 do extrato em **~2ms**.
-* [x] O Grafana confirmou o isolamento e proteção do PostgreSQL sob carga.
+* [x] O teste de contenção (`scripts/lab3b-contencao.js`) comprovou a armadilha do vizinho barulhento.
+* [x] O script oficial `scripts/lab3b.js` rodou com sucesso acusando P99 do extrato em **~2ms** com aprovação verde (**PASS**).
+* [x] O Grafana confirmou o isolamento e repouso do PostgreSQL durante o teste de cache.
 
 ---
 
