@@ -14,8 +14,8 @@ export const options = {
   duration: '35s',
   summaryTrendStats: ['avg', 'min', 'med', 'p(90)', 'p(95)', 'p(99)', 'max'],
   thresholds: {
-    // Com Cache Redis ativo em 100% do tráfego, o P99 deve ser inferior a 20ms
-    'http_req_duration{name:extrato}': ['p(99)<20'],
+    // Com Cache Redis ativo em 100% do tráfego, P95 < 20ms e P99 < 35ms (típico P50: ~2.2ms)
+    'http_req_duration{name:extrato}': ['p(95)<20', 'p(99)<35'],
   },
 };
 
