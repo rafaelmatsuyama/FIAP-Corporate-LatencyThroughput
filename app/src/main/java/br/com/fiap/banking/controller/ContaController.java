@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import br.com.fiap.banking.service.ExtratoCacheService;
 import java.util.Map;
 
 @RestController
@@ -20,10 +21,14 @@ public class ContaController {
 
     private final ContaRepository contaRepository;
     private final TransacaoRepository transacaoRepository;
+    private final ExtratoCacheService extratoCacheService;
 
-    public ContaController(ContaRepository contaRepository, TransacaoRepository transacaoRepository) {
+    public ContaController(ContaRepository contaRepository,
+                           TransacaoRepository transacaoRepository,
+                           ExtratoCacheService extratoCacheService) {
         this.contaRepository = contaRepository;
         this.transacaoRepository = transacaoRepository;
+        this.extratoCacheService = extratoCacheService;
     }
 
     /**
@@ -43,17 +48,14 @@ public class ContaController {
     }
 
     /**
-     * Rota com Cauda Longa (Gargalo de Performance Didático):
-     * Executa consulta de extrato na tabela transacoes sem índice em conta_id.
-     * Sob concorrência no k6, provoca Sequential Scan no PostgreSQL e saturação
-     * de I/O, elevando o P99 para > 600ms (Violação do SLO < 200ms).
+     * Rota de Extrato Bancário:
+     * - Sem índice no PostgreSQL: Sequential Scan massivo (P99 > 600ms - Aula 01/02).
+     * - Com índice composto no PostgreSQL: Index Scan direto (P99 ~ 35ms - Lab 03A).
+     * - Com Cache-Aside no Redis: Resposta in-memory sub-milissegundo (P99 ~ 2ms - Lab 03B).
      */
     @GetMapping("/contas/{id}/extrato")
     public ResponseEntity<List<Transacao>> getExtrato(@PathVariable Long id) {
-        List<Transacao> extrato = transacaoRepository.findByContaIdOrderByDataTransacaoDesc(
-                id,
-                PageRequest.of(0, 50)
-        );
+        List<Transacao> extrato = extratoCacheService.buscarExtrato(id);
         return ResponseEntity.ok(extrato);
     }
 

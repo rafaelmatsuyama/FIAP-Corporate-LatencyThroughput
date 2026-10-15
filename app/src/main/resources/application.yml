@@ -28,6 +28,13 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
+# Configurações de Cache da Aplicação (Lab 03B)
+app:
+  cache:
+    enabled: ${APP_CACHE_ENABLED:false}
+    ttl-seconds: ${APP_CACHE_TTL_SECONDS:30}
+
+
 # Configuração de Proxy JDBC para Observabilidade
 jdbc:
   datasource-proxy:

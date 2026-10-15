@@ -91,6 +91,8 @@ services:
       - SPRING_DATASOURCE_PASSWORD=postgres
       - SPRING_DATA_REDIS_HOST=banco-redis
       - SPRING_DATA_REDIS_PORT=6379
+      - APP_CACHE_ENABLED=${APP_CACHE_ENABLED:-false}
+      - APP_CACHE_TTL_SECONDS=${APP_CACHE_TTL_SECONDS:-30}
       - MANAGEMENT_OTLP_TRACING_ENDPOINT=http://telemetria-jaeger:4318/v1/traces
     depends_on:
       banco-postgres:

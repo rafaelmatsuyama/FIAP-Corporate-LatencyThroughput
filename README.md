@@ -76,6 +76,23 @@ Assim que a stack estiver ativa (`docker compose ps` com todos os serviços em `
      # No psql: EXPLAIN ANALYZE SELECT * FROM transacoes WHERE conta_id = 1001 ORDER BY data_transacao DESC LIMIT 20;
      ```
 
+### Aula 03 — Otimização de Código e Acesso a Dados
+5. **Lab 03A - Tuning de Persistência com Indexação Seletiva no PostgreSQL:**
+   * 📖 **Roteiro do Aluno:** [`labs/lab03a-indices-postgresql/Lab 03A - Roteiro Aluno.md`](labs/lab03a-indices-postgresql/Lab%2003A%20-%20Roteiro%20Aluno.md)
+   * ⚡ **Criação do Índice & Validação k6:**
+     ```bash
+     # No psql: CREATE INDEX idx_transacoes_conta_data ON transacoes (conta_id, data_transacao DESC);
+     k6 run scripts/lab3a.js
+     ```
+
+6. **Lab 03B - Implementação e Validação do Padrão Cache-Aside com Redis:**
+   * 📖 **Roteiro do Aluno:** [`labs/lab03b-cache-redis/Lab 03B - Roteiro Aluno.md`](labs/lab03b-cache-redis/Lab%2003B%20-%20Roteiro%20Aluno.md)
+   * ⚡ **Ativação do Cache & Validação sob Alta Carga:**
+     ```bash
+     APP_CACHE_ENABLED=true docker compose up -d banco-api
+     k6 run scripts/lab3b.js
+     ```
+
 ---
 
 ## 🗺️ Mapa de Portas e Serviços
@@ -97,16 +114,18 @@ Todos os laboratórios seguem o padrão estruturado passo a passo:
 
 ```text
 ├── labs/
-│   ├── lab01a-k6-primeiro-voo/      # Aula 01: Subida da stack e primeiro voo com k6 CLI
-│   ├── lab01b-baseline-slo/         # Aula 01: Carga concorrente e violação de SLO no extrato
-│   ├── lab02a-tracing-jaeger/       # Aula 02: Tracing distribuído e isolamento de gargalo
-│   ├── lab02b-explain-postgresql/   # Aula 02: Plano de execução e Sequential Scans
-│   ├── lab03a-index-tuning/         # Aula 03: Migração de índice B-Tree seletivo
-│   ├── lab03b-redis-cache/          # Aula 03: Implementação do padrão Cache-Aside
-│   └── lab04a-hikaricp-starvation/  # Aula 04: Dimensionamento e saturação do HikariCP
-├── scripts/                         # Cenários declarativos em JavaScript para o k6
-│   ├── lab1a.js                     # Baseline em rotas leves (10 VUs)
-│   └── lab1b.js                     # Tráfego misto com disparo de cauda longa (25 VUs)
+│   ├── lab01a-k6-primeiro-voo/         # Aula 01: Subida da stack e primeiro voo com k6 CLI
+│   ├── lab01b-baseline-slo/            # Aula 01: Carga concorrente e violação de SLO no extrato
+│   ├── lab02a-tracing-jaeger/          # Aula 02: Tracing distribuído e isolamento de gargalo
+│   ├── lab02b-explain-postgresql/      # Aula 02: Plano de execução e Sequential Scans
+│   ├── lab03a-indices-postgresql/      # Aula 03: Migração de índice B-Tree seletivo
+│   ├── lab03b-cache-redis/             # Aula 03: Implementação do padrão Cache-Aside
+│   └── lab04a-hikaricp-starvation/     # Aula 04: Dimensionamento e saturação do HikariCP
+├── scripts/                            # Cenários declarativos em JavaScript para o k6
+│   ├── lab1a.js                        # Baseline em rotas leves (10 VUs)
+│   ├── lab1b.js                        # Tráfego misto com disparo de cauda longa (25 VUs)
+│   ├── lab3a.js                        # Validação do índice composto (P99 < 200ms)
+│   └── lab3b.js                        # Validação sob estresse com Cache-Aside (P99 < 20ms)
 ├── db/                              # Schema e seed de transações do PostgreSQL
 │   └── init.sql
 ├── telemetria/                      # Configurações de telemetria e observabilidade
