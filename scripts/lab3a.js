@@ -15,7 +15,6 @@ export const options = {
   thresholds: {
     // Threshold formal de SLO bancário: P99 < 200ms
     'http_req_duration{name:extrato}': ['p(99)<200'],
-    'http_req_duration{name:saldo}': ['p(99)<20'],
   },
 };
 

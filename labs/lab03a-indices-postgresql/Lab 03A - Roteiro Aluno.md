@@ -137,7 +137,7 @@ k6 run scripts/lab3a.js
 
 Observe a saída tabular do console do k6:
 * O threshold `http_req_duration{name:extrato} ... p(99)<200` exibirá **[ ✓ ] PASS**!
-* O percentil **P99 do extrato agora marca ~35ms a 45ms** (uma redução de mais de 15x em relação aos > 600ms do baseline!).
+* O percentil **P99 do extrato agora marca ~35ms a 60ms** (com mediana em **~9ms** e throughput global saltando para **> 400 req/s**, eliminando a cauda longa de > 600ms a 850ms do baseline!).
 * O SLO bancário está formalmente restabelecido.
 
 ---
@@ -147,7 +147,7 @@ Abra o navegador no Grafana (`http://localhost:3000` | admin / admin):
 1. Acesse o dashboard **Core Banking - Visão de Performance**.
 2. Avalie as métricas operacionais consolidadas à luz do histórico do incidente:
    * **Resgate do Baseline (Aula 01 - Sem Índice):** Na medição inicial (Lab 01B), a rota de extrato violava criticamente o SLO bancário, registrando **P99 entre 600ms e 850ms** decorrente do *Sequential Scan* em 150 mil tuplas no PostgreSQL.
-   * **Estado Atual (Aula 03 - Pós-Indexação):** Observe no painel que a curva de latência P99 do extrato opera agora em patamar plano e previsível de **~35ms a 45ms**, eliminando a cauda longa e cumprindo o SLO corporativo (**< 200ms**).
+   * **Estado Atual (Aula 03 - Pós-Indexação):** Observe no painel que a curva de latência P99 do extrato opera agora em patamar plano e previsível de **~35ms a 60ms** (com mediana cirúrgica em **~9ms**), eliminando a cauda longa e cumprindo com ampla folga o SLO corporativo (**< 200ms**).
    * **Database Query Duration:** O tempo de persistência caiu para frações de milissegundo, liberando conexões do pool e estabilizando o throughput da API.
 
 ---

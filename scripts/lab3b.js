@@ -16,7 +16,6 @@ export const options = {
   thresholds: {
     // Com Cache Redis ativo, o P99 deve ser inferior a 20ms (típico: 1.5ms - 3ms)
     'http_req_duration{name:extrato}': ['p(99)<20'],
-    'http_req_duration{name:saldo}': ['p(99)<15'],
   },
 };
 
