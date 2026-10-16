@@ -20,7 +20,7 @@ O treinamento adota a metodologia contínua de **Problem-Based Learning (PBL)** 
 │ 1. MEDIÇÃO (Aula 01)     ──► Testes com k6 & Violação de SLO (P99 > 200ms)  │
 │ 2. DIAGNÓSTICO (Aula 02) ──► Tracing com Jaeger & EXPLAIN ANALYZE no Postgres│
 │ 3. CURA (Aula 03)        ──► Indexação Composta & Cache-Aside com Redis     │
-│ 4. BLINDAGEM (Aula 04)   ──► HikariCP Pool Tuning & Flash Pitch dos Squads  │
+│ 4. BLINDAGEM (Aula 04)   ──► HikariCP Pool Tuning & Defesa de Borda (Rate Limiting) │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -91,6 +91,23 @@ Assim que a stack estiver ativa (`docker compose ps` com todos os serviços em `
      ```bash
      APP_CACHE_ENABLED=true docker compose up -d banco-api
      k6 run scripts/lab3b.js
+     ```
+
+### Aula 04 — Escala, Vazão e Blindagem
+7. **Lab 04A - Diagnóstico de Esgotamento de Conexões no HikariCP (Pool Starvation):**
+   * 📖 **Roteiro do Aluno:** [`labs/lab04a-pool-hikaricp/Lab 04A - Roteiro Aluno.md`](labs/lab04a-pool-hikaricp/Lab%2004A%20-%20Roteiro%20Aluno.md)
+   * ⚡ **Estrangulamento do Pool & Teste de Carga k6:**
+     ```bash
+     SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE=2 docker compose up -d --force-recreate banco-api
+     k6 run scripts/lab4a.js
+     ```
+
+8. **Lab 04B - Defesa de Borda com Rate Limiting e Throttling (Token Bucket):**
+   * 📖 **Roteiro do Aluno:** [`labs/lab04b-rate-limiting/Lab 04B - Roteiro Aluno.md`](labs/lab04b-rate-limiting/Lab%2004B%20-%20Roteiro%20Aluno.md)
+   * ⚡ **Ativação da Defesa de Borda & Rajada de 100 VUs:**
+     ```bash
+     APP_RATELIMIT_ENABLED=true docker compose up -d --force-recreate banco-api
+     k6 run scripts/lab4b.js
      ```
 
 ---

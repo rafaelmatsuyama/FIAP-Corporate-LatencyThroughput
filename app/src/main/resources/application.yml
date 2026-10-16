@@ -9,9 +9,9 @@ spring:
     username: ${SPRING_DATASOURCE_USERNAME:postgres}
     password: ${SPRING_DATASOURCE_PASSWORD:postgres}
     hikari:
-      maximum-pool-size: 20
-      minimum-idle: 5
-      connection-timeout: 30000
+      maximum-pool-size: ${SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE:20}
+      minimum-idle: ${SPRING_DATASOURCE_HIKARI_MINIMUM_IDLE:5}
+      connection-timeout: ${SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT:30000}
       idle-timeout: 600000
       max-lifetime: 1800000
   data:
@@ -28,11 +28,15 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
 
-# Configurações de Cache da Aplicação (Lab 03B)
+# Configurações de Cache (Lab 03B) e Rate Limiting (Lab 04B)
 app:
   cache:
     enabled: ${APP_CACHE_ENABLED:false}
     ttl-seconds: ${APP_CACHE_TTL_SECONDS:30}
+  ratelimit:
+    enabled: ${APP_RATELIMIT_ENABLED:false}
+    capacity: ${APP_RATELIMIT_CAPACITY:50}
+    refill-tokens-per-second: ${APP_RATELIMIT_REFILL_RATE:50}
 
 
 # Configuração de Proxy JDBC para Observabilidade
